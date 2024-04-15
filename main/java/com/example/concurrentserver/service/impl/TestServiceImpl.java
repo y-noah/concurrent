@@ -38,7 +38,9 @@ public class TestServiceImpl implements ITestService {
         List<Test> tests = testMapper.selectList(testQueryWrapper);
         List<Age> ages = ageMapper.selectList(ageQueryWrapper);
 
-        return tests.stream()
+        // 试试分页查询分页处理，搭配多线程
+
+        return tests.parallelStream()
                 .flatMap(test -> ages.stream()
                         .filter(age -> age.getMin() <= test.getAge() && test.getAge() <= age.getMax())
                         .map(age -> {

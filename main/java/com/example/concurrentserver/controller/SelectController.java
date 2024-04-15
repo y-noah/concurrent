@@ -60,19 +60,52 @@ public class SelectController {
     public void testExecutor() {
         // 定长线程池
         ExecutorService fixedPool = Executors.newFixedThreadPool(3);
+        fixedPool.submit(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("fixedPool submit Thread: " + Thread.currentThread().getName() + System.currentTimeMillis());
+            }
+        });
+        fixedPool.shutdown();
+
+
         // 单个线程池
         ExecutorService singlePool = Executors.newSingleThreadExecutor();
+        singlePool.submit(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("singlePool submit Thread: " + Thread.currentThread().getName() + System.currentTimeMillis());
+            }
+        });
+        singlePool.shutdown();
+
+
+
         // 可缓存线程池
         ExecutorService cachePool = Executors.newCachedThreadPool();
+        cachePool.submit(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("cachePool submit Thread: " + Thread.currentThread().getName() + System.currentTimeMillis());
+            }
+        });
+        cachePool.shutdown();
+
+
+
         // 周期任务的线程池
         ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(5);
-
         scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                System.out.println("Thread: " + Thread.currentThread().getName() + System.currentTimeMillis());
+                System.out.println("scheduleAtFixedRate Thread: " + Thread.currentThread().getName() + System.currentTimeMillis());
             }
         }, 1,5, TimeUnit.SECONDS);
-//        scheduledExecutorService.shutdown();
+        scheduledExecutorService.schedule(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("schedule Thread: " + Thread.currentThread().getName() + System.currentTimeMillis());
+            }
+        }, 3, TimeUnit.SECONDS);
     }
 }
