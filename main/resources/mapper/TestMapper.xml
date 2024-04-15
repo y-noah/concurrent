@@ -11,4 +11,13 @@
     <select id="getByAge" resultMap="TestResultMap">
         SELECT * FROM test WHERE age > #{age}
     </select>
+
+
+    <select id="getByPage" resultMap="TestResultMap">
+        SELECT * FROM test LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="getTestJoinAge" resultMap="TestResultMap">
+        SELECT * FROM test
+    </select>
 </mapper>

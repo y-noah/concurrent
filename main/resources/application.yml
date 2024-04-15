@@ -16,3 +16,11 @@ spring:
 logging:
   level:
     com.example: debug
+
+
+# 开启分页插件
+mybatis-plus:
+  configuration:
+    # 分页插件开启
+    page-helper:
+      helper-dialect: mysql
