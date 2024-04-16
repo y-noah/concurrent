@@ -12,10 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 @Controller
 @RestController
@@ -101,11 +98,14 @@ public class SelectController {
                 System.out.println("scheduleAtFixedRate Thread: " + Thread.currentThread().getName() + System.currentTimeMillis());
             }
         }, 1,5, TimeUnit.SECONDS);
+
+
         scheduledExecutorService.schedule(new Runnable() {
             @Override
             public void run() {
                 System.out.println("schedule Thread: " + Thread.currentThread().getName() + System.currentTimeMillis());
             }
         }, 3, TimeUnit.SECONDS);
+
     }
 }
