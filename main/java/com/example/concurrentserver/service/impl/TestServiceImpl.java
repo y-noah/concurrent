@@ -46,7 +46,7 @@ public class TestServiceImpl implements ITestService {
         Long count = testMapper.selectCount(testQueryWrapper);
 
         int size = 500000;
-        double ceil = Math.ceil(count / size);
+        double ceil = Math.ceil((double)count / size);
 //        int offset = 0;
 
         List<TestJoinAge> testJoinAges = new ArrayList<>();

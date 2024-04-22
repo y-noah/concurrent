@@ -1,7 +1,9 @@
 package com.example.concurrentserver.controller;
 
+import com.example.concurrentserver.entity.Age;
 import com.example.concurrentserver.entity.Test;
 import com.example.concurrentserver.entity.TestJoinAge;
+import com.example.concurrentserver.service.IAgeService;
 import com.example.concurrentserver.service.ITestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,8 @@ import java.util.concurrent.*;
 public class SelectController {
     @Autowired
     private ITestService iTestService;
+    @Autowired
+    private IAgeService iAgeService;
 
     private static final Logger logger = LoggerFactory.getLogger(SelectController.class);
 
@@ -107,5 +111,42 @@ public class SelectController {
             }
         }, 3, TimeUnit.SECONDS);
 
+    }
+
+    @PostMapping("testRoutine")
+    public void testRoutine() {
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(2);
+
+        scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                List<Age> age = iAgeService.getAge();
+                for (Age a: age) {
+                    System.out.println(a.toString());
+                }
+            }
+        }, 0, 2, TimeUnit.SECONDS);
+
+        scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                int max = iAgeService.updateAge();
+                System.out.println("max" + max);
+            }
+        }, 0, 2, TimeUnit.SECONDS);
+    }
+
+    @PostMapping("testConcurrent")
+    public void testConcurrent() {
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+
+        Runnable task = () -> {
+             int max = iAgeService.getMax();
+             System.out.println("max:" + max);
+            if (max <= 0) {
+                scheduledExecutorService.shutdown();
+            }
+        };
+        ScheduledFuture<?> scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(task, 0, 2, TimeUnit.SECONDS);
     }
 }
