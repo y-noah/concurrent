@@ -149,4 +149,18 @@ public class SelectController {
         };
         ScheduledFuture<?> scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(task, 0, 2, TimeUnit.SECONDS);
     }
+
+    @PostMapping("testConcurrentLock")
+    public void testConcurrentLock() {
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+
+        Runnable task = () -> {
+            int max = iAgeService.getMaxLock();
+            System.out.println("max:" + max);
+            if (max <= 0) {
+                scheduledExecutorService.shutdown();
+            }
+        };
+        ScheduledFuture<?> scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(task, 0, 2, TimeUnit.SECONDS);
+    }
 }

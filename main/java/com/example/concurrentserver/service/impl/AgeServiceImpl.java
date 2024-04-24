@@ -10,11 +10,15 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 
 @Service
 public class AgeServiceImpl implements IAgeService {
     @Autowired
     private AgeMapper ageMapper;
+
+    private final Object lock = new Object();
+
 
     /*
     * 1_1、Isolation.DEFAULT:为数据源的默认隔离级别
@@ -46,18 +50,52 @@ public class AgeServiceImpl implements IAgeService {
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public int getMax() {
-        QueryWrapper<Age> ageQueryWrapper1 = new QueryWrapper<>();
-        ageQueryWrapper1.eq("id", 1);
-        List<Age> ages = ageMapper.selectList(ageQueryWrapper1);
-        int m = ages.get(0).getMax();
+        try {
+            QueryWrapper<Age> ageQueryWrapper1 = new QueryWrapper<>();
+            ageQueryWrapper1.eq("id", 1);
+            List<Age> ages = ageMapper.selectList(ageQueryWrapper1);
+            int m = ages.get(0).getMax();
 
-        QueryWrapper<Age> ageQueryWrapper = new QueryWrapper<>();
-        ageQueryWrapper.eq("id", 1);
-        Age age = new Age();
-        m = m - 1;
-        age.setMax(m);
-        ageMapper.update(age, ageQueryWrapper);
-        return m;
+
+            QueryWrapper<Age> ageQueryWrapper = new QueryWrapper<>();
+            ageQueryWrapper.eq("id", 1);
+            Age age = new Age();
+            m = m - 1;
+            age.setMax(m);
+            ageMapper.update(age, ageQueryWrapper);
+
+            return m;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return -9999;
+        }
+    }
+
+    @Override
+    public int getMaxLock() {
+
+        synchronized (lock) {
+            try {
+                QueryWrapper<Age> ageQueryWrapper1 = new QueryWrapper<>();
+                ageQueryWrapper1.eq("id", 1);
+                List<Age> ages = ageMapper.selectList(ageQueryWrapper1);
+                int m = ages.get(0).getMax();
+
+
+                QueryWrapper<Age> ageQueryWrapper = new QueryWrapper<>();
+                ageQueryWrapper.eq("id", 1);
+                Age age = new Age();
+                m = m - 1;
+                age.setMax(m);
+                ageMapper.update(age, ageQueryWrapper);
+
+                return m;
+            }catch (Exception e) {
+                e.printStackTrace();
+                return -9999;
+            }
+        }
     }
 }

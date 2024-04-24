@@ -9,4 +9,5 @@ public interface IAgeService {
     int updateAge();
 
     int getMax();
+    int getMaxLock();
 }
