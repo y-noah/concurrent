@@ -58,7 +58,6 @@ public class AgeServiceImpl implements IAgeService {
             List<Age> ages = ageMapper.selectList(ageQueryWrapper1);
             int m = ages.get(0).getMax();
 
-
             QueryWrapper<Age> ageQueryWrapper = new QueryWrapper<>();
             ageQueryWrapper.eq("id", 1);
             Age age = new Age();
