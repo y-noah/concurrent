@@ -163,4 +163,9 @@ public class SelectController {
         };
         ScheduledFuture<?> scheduledFuture = scheduledExecutorService.scheduleAtFixedRate(task, 0, 2, TimeUnit.SECONDS);
     }
+
+    @PostMapping("testRedis")
+    public void testRedis() {
+        System.out.println("text:" + iAgeService.testRedis());
+    }
 }

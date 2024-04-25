@@ -5,6 +5,10 @@ import com.example.concurrentserver.entity.Age;
 import com.example.concurrentserver.mapper.AgeMapper;
 import com.example.concurrentserver.service.IAgeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +20,10 @@ import java.util.concurrent.locks.Lock;
 public class AgeServiceImpl implements IAgeService {
     @Autowired
     private AgeMapper ageMapper;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     private final Object lock = new Object();
 
@@ -96,5 +104,18 @@ public class AgeServiceImpl implements IAgeService {
                 return -9999;
             }
         }
+    }
+
+    @Override
+    public String testRedis() {
+        stringRedisTemplate.opsForValue().set("test", "9527");
+        SetOperations<String, String> stringStringSetOperations = redisTemplate.opsForSet();
+        stringStringSetOperations.add("set", "setTest");
+        ListOperations<String, String> stringStringListOperations = redisTemplate.opsForList();
+        stringStringListOperations.rightPush("list", "listTest");
+
+        return stringRedisTemplate.opsForValue().get("test") + "," +
+                stringStringSetOperations.members("set") + "," +
+                stringStringListOperations.range("list",0,1);
     }
 }

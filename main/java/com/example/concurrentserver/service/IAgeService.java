@@ -10,4 +10,6 @@ public interface IAgeService {
 
     int getMax();
     int getMaxLock();
+
+    String testRedis();
 }
