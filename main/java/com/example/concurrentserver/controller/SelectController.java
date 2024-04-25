@@ -168,4 +168,14 @@ public class SelectController {
     public void testRedis() {
         System.out.println("text:" + iAgeService.testRedis());
     }
+
+    @PostMapping("redisCache")
+    public void redisCache() {
+        System.out.println("text:" + iAgeService.redisCache());
+    }
+
+    @PostMapping("redisCache2")
+    public void redisCache2() {
+        System.out.println("text:" + iAgeService.redisCache2());
+    }
 }

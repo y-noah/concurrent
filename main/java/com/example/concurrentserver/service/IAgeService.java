@@ -12,4 +12,7 @@ public interface IAgeService {
     int getMaxLock();
 
     String testRedis();
+
+    List<Age> redisCache();
+    List<Age> redisCache2();
 }

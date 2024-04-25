@@ -4,17 +4,16 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.concurrentserver.entity.Age;
 import com.example.concurrentserver.mapper.AgeMapper;
 import com.example.concurrentserver.service.IAgeService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.ListOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.concurrent.locks.Lock;
 
 @Service
 public class AgeServiceImpl implements IAgeService {
@@ -24,6 +23,7 @@ public class AgeServiceImpl implements IAgeService {
     private StringRedisTemplate stringRedisTemplate;
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
+
 
     private final Object lock = new Object();
 
@@ -117,5 +117,32 @@ public class AgeServiceImpl implements IAgeService {
         return stringRedisTemplate.opsForValue().get("test") + "," +
                 stringStringSetOperations.members("set") + "," +
                 stringStringListOperations.range("list",0,1);
+    }
+
+    @Override
+    public List<Age> redisCache() {
+        List<Age> ages = ageMapper.selectList(null);
+
+        // 获取 Redis 操作对象
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+
+        // 将查询到的 Age 对象列表转换为 JSON 字符串
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String json = objectMapper.writeValueAsString(ages);
+
+            // 将 JSON 字符串存储到 Redis 中
+            valueOperations.set("Cache", json);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return ages;
+    }
+
+    @Override
+    @Cacheable(value = "agesCache")
+    public List<Age> redisCache2() {
+        return ageMapper.selectList(null);
     }
 }
