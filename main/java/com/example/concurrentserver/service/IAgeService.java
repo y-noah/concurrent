@@ -15,4 +15,6 @@ public interface IAgeService {
 
     List<Age> redisCache();
     List<Age> redisCache2();
+
+    int updateAgeRedis();
 }

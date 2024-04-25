@@ -1,6 +1,7 @@
 package com.example.concurrentserver.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.concurrentserver.config.AgeRedisMessagePublisher;
 import com.example.concurrentserver.entity.Age;
 import com.example.concurrentserver.mapper.AgeMapper;
 import com.example.concurrentserver.service.IAgeService;
@@ -23,6 +24,8 @@ public class AgeServiceImpl implements IAgeService {
     private StringRedisTemplate stringRedisTemplate;
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
+    @Autowired
+    private AgeRedisMessagePublisher publisher;
 
 
     private final Object lock = new Object();
@@ -144,5 +147,18 @@ public class AgeServiceImpl implements IAgeService {
     @Cacheable(value = "agesCache")
     public List<Age> redisCache2() {
         return ageMapper.selectList(null);
+    }
+
+    @Override
+    public int updateAgeRedis() {
+        QueryWrapper<Age> ageQueryWrapper = new QueryWrapper<>();
+        ageQueryWrapper.eq("id", 1);
+        Age age = new Age();
+        int v = (int) (Math.random()*100);
+        age.setMax(v);
+        ageMapper.update(age, ageQueryWrapper);
+        publisher.publish("UPDATE");
+
+        return v;
     }
 }

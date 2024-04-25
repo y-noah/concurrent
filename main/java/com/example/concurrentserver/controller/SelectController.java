@@ -3,6 +3,7 @@ package com.example.concurrentserver.controller;
 import com.example.concurrentserver.entity.Age;
 import com.example.concurrentserver.entity.Test;
 import com.example.concurrentserver.entity.TestJoinAge;
+import com.example.concurrentserver.mapper.AgeMapper;
 import com.example.concurrentserver.service.IAgeService;
 import com.example.concurrentserver.service.ITestService;
 import org.slf4j.Logger;
@@ -26,6 +27,8 @@ public class SelectController {
     private IAgeService iAgeService;
 
     private static final Logger logger = LoggerFactory.getLogger(SelectController.class);
+    @Autowired
+    private AgeMapper ageMapper;
 
     @PostMapping("/getByAge")
     public List<Test> getByAge(Integer age) {
@@ -177,5 +180,11 @@ public class SelectController {
     @PostMapping("redisCache2")
     public void redisCache2() {
         System.out.println("text:" + iAgeService.redisCache2());
+    }
+
+    @PostMapping("redisUpdate")
+    public void redisUpdate() {
+        int i = iAgeService.updateAgeRedis();
+        System.out.println("RedisI:" + i);
     }
 }
