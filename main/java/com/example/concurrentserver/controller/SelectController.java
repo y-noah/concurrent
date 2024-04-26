@@ -3,7 +3,6 @@ package com.example.concurrentserver.controller;
 import com.example.concurrentserver.entity.Age;
 import com.example.concurrentserver.entity.Test;
 import com.example.concurrentserver.entity.TestJoinAge;
-import com.example.concurrentserver.mapper.AgeMapper;
 import com.example.concurrentserver.service.IAgeService;
 import com.example.concurrentserver.service.ITestService;
 import org.slf4j.Logger;
@@ -27,8 +26,6 @@ public class SelectController {
     private IAgeService iAgeService;
 
     private static final Logger logger = LoggerFactory.getLogger(SelectController.class);
-    @Autowired
-    private AgeMapper ageMapper;
 
     @PostMapping("/getByAge")
     public List<Test> getByAge(Integer age) {
@@ -43,7 +40,6 @@ public class SelectController {
         List<Test> byPage = iTestService.getByPage(size, offset);
         long l2 = System.currentTimeMillis();
         logger.info("耗时：" + (l2 - l1) + "ms");
-
         // 用分页插件需要添加拦截器
         // IPage<Test> byPage = iTestService.getByPage(size, offset);
 
@@ -72,7 +68,6 @@ public class SelectController {
         });
         fixedPool.shutdown();
 
-
         // 单个线程池
         ExecutorService singlePool = Executors.newSingleThreadExecutor();
         singlePool.submit(new Runnable() {
@@ -82,8 +77,6 @@ public class SelectController {
             }
         });
         singlePool.shutdown();
-
-
 
         // 可缓存线程池
         ExecutorService cachePool = Executors.newCachedThreadPool();
@@ -95,8 +88,6 @@ public class SelectController {
         });
         cachePool.shutdown();
 
-
-
         // 周期任务的线程池
         ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(5);
         scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
@@ -106,20 +97,17 @@ public class SelectController {
             }
         }, 1,5, TimeUnit.SECONDS);
 
-
         scheduledExecutorService.schedule(new Runnable() {
             @Override
             public void run() {
                 System.out.println("schedule Thread: " + Thread.currentThread().getName() + System.currentTimeMillis());
             }
         }, 3, TimeUnit.SECONDS);
-
     }
 
     @PostMapping("testRoutine")
     public void testRoutine() {
         ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(2);
-
         scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
@@ -129,7 +117,6 @@ public class SelectController {
                 }
             }
         }, 0, 2, TimeUnit.SECONDS);
-
         scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {

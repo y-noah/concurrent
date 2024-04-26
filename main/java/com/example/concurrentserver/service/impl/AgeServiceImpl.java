@@ -27,9 +27,7 @@ public class AgeServiceImpl implements IAgeService {
     @Autowired
     private AgeRedisMessagePublisher publisher;
 
-
     private final Object lock = new Object();
-
 
     /*
     * 1_1、Isolation.DEFAULT:为数据源的默认隔离级别
@@ -38,7 +36,6 @@ public class AgeServiceImpl implements IAgeService {
       1_4、iIsolation.REPEATABLE_READ:可重复读取级别
       1_5、iIsolation.SERIALIZABLE:序列化级别
     */
-
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public List<Age> getAge() {
@@ -85,14 +82,12 @@ public class AgeServiceImpl implements IAgeService {
 
     @Override
     public int getMaxLock() {
-
         synchronized (lock) {
             try {
                 QueryWrapper<Age> ageQueryWrapper1 = new QueryWrapper<>();
                 ageQueryWrapper1.eq("id", 1);
                 List<Age> ages = ageMapper.selectList(ageQueryWrapper1);
                 int m = ages.get(0).getMax();
-
 
                 QueryWrapper<Age> ageQueryWrapper = new QueryWrapper<>();
                 ageQueryWrapper.eq("id", 1);
