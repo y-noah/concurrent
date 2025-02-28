@@ -1,0 +1,27 @@
+server:
+  port: 8080
+
+#默认HikariCP连接池
+spring:
+  datasource:
+    username: root
+    password: root
+#    password: Noah.1225
+    url: jdbc:mysql://localhost:3306/test
+
+  redis:
+    port: 6379
+    host: localhost
+
+#默认日志框架Logback
+logging:
+  level:
+    com.example: debug
+
+
+# 开启分页插件
+mybatis-plus:
+  configuration:
+    # 分页插件开启
+    page-helper:
+      helper-dialect: mysql
